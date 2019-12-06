@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,10 +14,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Perf 07 Test'),
     );
   }
 }
+
+const MethodChannel methodChannel = MethodChannel('app');
+const EventChannel events = EventChannel('app/events');
+
+final eventsStream = events.receiveBroadcastStream();
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -24,10 +33,26 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+Future<int> computeSomething(int x) async {
+  await Future.delayed(Duration(seconds: 3), () {
 
-  void _startLongRunningTask() {}
+  });
+  return -1;
+}
+
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  void _startLongRunningTask() async {
+    compute(computeSomething, -1);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    debugPrint('state: $state');
+
+    _startLongRunningTask();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+              'Press the + button, followed by the system back button.',
             ),
           ],
         ),
