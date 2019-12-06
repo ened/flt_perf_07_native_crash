@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,11 +18,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-const MethodChannel methodChannel = MethodChannel('app');
-const EventChannel events = EventChannel('app/events');
-
-final eventsStream = events.receiveBroadcastStream();
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
@@ -34,9 +28,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 Future<int> computeSomething(int x) async {
-  await Future.delayed(Duration(seconds: 3), () {
-
-  });
+  await Future.delayed(Duration(seconds: 3), () {});
   return -1;
 }
 
